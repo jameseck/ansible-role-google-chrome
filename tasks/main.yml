@@ -1,0 +1,17 @@
+---
+- name: Install fedora-workstation-repositories
+  dnf:
+    name: fedora-workstation-repositories
+    state: present
+
+- name: Enable google-chrome repository
+  lineinfile:
+    path: /etc/yum.repos.d/google-chrome.repo
+    create: false
+    regexp: enabled=
+    line: enabled=1
+
+- name: Install google-chrome
+  dnf:
+    name: "{{ google_chrome_package_name }}"
+    state: present
