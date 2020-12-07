@@ -19,28 +19,25 @@ jobs:
     steps:
       - name: Check out the codebase.
         uses: actions/checkout@v2
+        with:
+          path: jameseck.google_chrome
 
       - name: Set up Python 3.
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
 
-      - name: Install podman
-        run: |
-          . /etc/os-release
-          echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-          curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | sudo apt-key add -
-          sudo apt-get update
-          #sudo apt-get -y upgrade
-          sudo apt-get -y install podman
-
       - name: Install test dependencies.
-        run: pip3 install molecule[podman] yamllint ansible-lint
+        run: pip3 install molecule[docker] yamllint ansible-lint
+
+      - name: look in cwd
+        run: pwd ; ls -la
 
       - name: Run Molecule tests.
-        run: molecule test
+        run: molecule test -s docker
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
           MOLECULE_DISTRO: ${{ matrix.distro }}
-        #working-directory: molecule
+          ANSIBLE_ROLES_PATH: "../../"
+        working-directory: jameseck.google_chrome
